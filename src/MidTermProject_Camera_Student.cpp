@@ -75,8 +75,8 @@ int main(int argc, const char *argv[])
 
         // extract 2D keypoints from current image
         vector<cv::KeyPoint> keypoints; // create empty feature list for current image
-        string detectorType = "SHITOMASI";
-
+        string detectorType = "SHITOMASI";   // HARRIS, FAST, BRISK, ORB, AKAZE, SIFT
+        bool bVis = true;
         //// STUDENT ASSIGNMENT
         //// TASK MP.2 -> add the following keypoint detectors in file matching2D.cpp and enable string-based selection based on detectorType
         //// -> HARRIS, FAST, BRISK, ORB, AKAZE, SIFT
@@ -85,10 +85,30 @@ int main(int argc, const char *argv[])
         {
             detKeypointsShiTomasi(keypoints, imgGray, false);
         }
-        else
+        else if(detectorType.compare("HARRIS") == 0)
         {
-            //...
+            detKeypointsHarris(keypoints, imgGray, false);
         }
+        else if(((((detectorType.compare("FAST") == 0) ||
+                    (detectorType.compare("BRISK") == 0)) ||
+                    (detectorType.compare("ORB") == 0)) ||
+                    (detectorType.compare("AKAZE") == 0)) ||
+                    (detectorType.compare("SIFT") == 0))
+        {
+            detKeypointsModern(keypoints, imgGray, detectorType, false);
+        }
+
+        // visualize results
+        // if (bVis)
+        // {
+        //     cv::Mat visImage = imgGray.clone();
+        //     cv::drawKeypoints(imgGray, keypoints, visImage, cv::Scalar::all(-1), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+        //     string windowName = "Detector Results";
+        //     cv::namedWindow(windowName, 6);
+        //     imshow(windowName, visImage);
+        //     cv::waitKey(0);
+        // }
+
         //// EOF STUDENT ASSIGNMENT
 
         //// STUDENT ASSIGNMENT
@@ -97,10 +117,33 @@ int main(int argc, const char *argv[])
         // only keep keypoints on the preceding vehicle
         bool bFocusOnVehicle = true;
         cv::Rect vehicleRect(535, 180, 180, 150);
+        std::vector<cv::KeyPoint> relKeypoints; 
         if (bFocusOnVehicle)
         {
+            for(int i = 0; i<keypoints.size(); i++)
+            {
+                cv::KeyPoint kp = (keypoints.at(i)); 
+                if(((kp.pt.x > vehicleRect.x) && (kp.pt.x < (vehicleRect.x + vehicleRect.width))) &&
+                   ((kp.pt.y > vehicleRect.y) && (kp.pt.y < (vehicleRect.y + vehicleRect.height))))
+                {
+                    relKeypoints.push_back(kp);
+                }
+
+            }
             // ...
         }
+
+        // visualize results
+        if (bVis)
+        {
+            cv::Mat visImage = imgGray.clone();
+            cv::drawKeypoints(imgGray, relKeypoints, visImage, cv::Scalar::all(-1), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+            string windowName = "Detector Results";
+            cv::namedWindow(windowName, 6);
+            imshow(windowName, visImage);
+            cv::waitKey(0);
+        }
+
 
         //// EOF STUDENT ASSIGNMENT
 

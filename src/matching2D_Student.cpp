@@ -91,13 +91,70 @@ void detKeypointsShiTomasi(vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool b
     cout << "Shi-Tomasi detection with n=" << keypoints.size() << " keypoints in " << 1000 * t / 1.0 << " ms" << endl;
 
     // visualize results
-    if (bVis)
-    {
-        cv::Mat visImage = img.clone();
-        cv::drawKeypoints(img, keypoints, visImage, cv::Scalar::all(-1), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
-        string windowName = "Shi-Tomasi Corner Detector Results";
-        cv::namedWindow(windowName, 6);
-        imshow(windowName, visImage);
-        cv::waitKey(0);
-    }
+    // if (bVis)
+    // {
+    //     cv::Mat visImage = img.clone();
+    //     cv::drawKeypoints(img, keypoints, visImage, cv::Scalar::all(-1), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+    //     string windowName = "Shi-Tomasi Corner Detector Results";
+    //     cv::namedWindow(windowName, 6);
+    //     imshow(windowName, visImage);
+    //     cv::waitKey(0);
+    // }
+}
+
+// Detect keypoints in image using the traditional Harris detector
+void detKeypointsHarris(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool bVis)
+{
+    std::cout << "Harris detector" << std::endl;
+
+}
+
+// Detect keypoints in image using the traditional HarrisFAST, BRISK, ORB, AKAZE, SIFT detector
+void detKeypointsModern(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, std::string detectorType, bool bVis)
+{
+        if(detectorType.compare("FAST") == 0)
+        {
+          
+            std::cout << "FAST detector" << std::endl;
+            int threshold = 10;
+            bool nonmaxSuppression = true;
+            cv::Ptr<cv::FastFeatureDetector> fast = cv::FastFeatureDetector::create(threshold, nonmaxSuppression);
+            fast->detect(img, keypoints);  //TODO:add mask 
+            
+            //...
+        }
+        else if(detectorType.compare("BRISK") == 0)
+        {
+            std::cout << "BRISK detector" << std::endl;
+            cv::Ptr<cv::BRISK> brisk = cv::BRISK::create();
+            brisk->detect(img, keypoints);
+            
+
+            //...
+        }
+        else if(detectorType.compare("ORB") == 0)
+        {
+            std::cout << "ORB detector" << std::endl;
+            cv::Ptr<cv::ORB> orb = cv::ORB::create();
+            orb->detect(img, keypoints);
+            
+            //...
+        }
+        else if(detectorType.compare("AKAZE") == 0)
+        {
+            std::cout << "AKAZE detector" << std::endl;
+            cv::Ptr<cv::AKAZE> akaze = cv::AKAZE::create();
+            akaze->detect(img, keypoints);
+            //...
+        }
+        else if(detectorType.compare("SIFT") == 0)
+        {
+            std::cout << "SIFT detector" << std::endl;
+            cv::Ptr<cv::xfeatures2d::SIFT> sift = cv::xfeatures2d::SIFT::create();
+            sift->detect(img, keypoints);
+            //...
+        }
+        else{
+            std::cout << "ERROR" << std::endl;
+        }
 }
