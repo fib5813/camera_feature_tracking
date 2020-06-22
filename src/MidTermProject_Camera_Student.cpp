@@ -134,15 +134,15 @@ int main(int argc, const char *argv[])
         }
 
         // visualize results
-        if (bVis)
-        {
-            cv::Mat visImage = imgGray.clone();
-            cv::drawKeypoints(imgGray, relKeypoints, visImage, cv::Scalar::all(-1), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
-            string windowName = "Detector Results";
-            cv::namedWindow(windowName, 6);
-            imshow(windowName, visImage);
-            cv::waitKey(0);
-        }
+//         if (bVis)
+//         {
+//             cv::Mat visImage = imgGray.clone();
+//             cv::drawKeypoints(imgGray, relKeypoints, visImage, cv::Scalar::all(-1), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+//             string windowName = "Detector Results";
+//             cv::namedWindow(windowName, 6);
+//             imshow(windowName, visImage);
+//             cv::waitKey(0);
+//         }
 
 
         //// EOF STUDENT ASSIGNMENT
