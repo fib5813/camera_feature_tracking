@@ -41,18 +41,64 @@ void descKeypoints(vector<cv::KeyPoint> &keypoints, cv::Mat &img, cv::Mat &descr
     cv::Ptr<cv::DescriptorExtractor> extractor;
     if (descriptorType.compare("BRISK") == 0)
     {
+        std::cout << "BRISK descriptor" << std::endl;
 
         int threshold = 30;        // FAST/AGAST detection threshold score.
         int octaves = 3;           // detection octaves (use 0 to do single scale)
         float patternScale = 1.0f; // apply this scale to the pattern used for sampling the neighbourhood of a keypoint.
-
         extractor = cv::BRISK::create(threshold, octaves, patternScale);
+        
     }
-    else
+    else if(descriptorType.compare("BRIEF") == 0) 
     {
+        std::cout << "BRIEF descriptor" << std::endl;
+        extractor = cv::xfeatures2d::BriefDescriptorExtractor::create();
+        //...
 
+    }
+    else if(descriptorType.compare("ORB") == 0) 
+    {
+        std::cout << "ORB descriptor" << std::endl;
+        int   nfeatures = 500;     // The maximum number of features to retain.
+        float scaleFactor = 1.2f;  // Pyramid decimation ratio, greater than 1.
+        int   nlevels = 8;         // The number of pyramid levels.
+        int   edgeThreshold = 31;  // This is size of the border where the features are not detected.
+        int   firstLevel = 0;      // The level of pyramid to put source image to.
+        int   WTA_K = 2;           // The number of points that produce each element of the oriented BRIEF descriptor.
+        auto  scoreType = cv::ORB::HARRIS_SCORE; // HARRIS_SCORE / FAST_SCORE algorithm is used to rank features.
+        int   patchSize = 31;      // Size of the patch used by the oriented BRIEF descriptor.
+        int   fastThreshold = 20;  // The FAST threshold.
+
+        extractor = cv::ORB::create(nfeatures, scaleFactor, nlevels, edgeThreshold,
+                                firstLevel, WTA_K, scoreType, patchSize, fastThreshold);
+//         extractor = cv::ORB::create();
+//         cv::Ptr<cv::ORB> orb = cv::ORB::create();
+//         orb->compute(img, keypoints, descriptors);
+//         extractor->compute(img, keypoints, descriptors);
         //...
     }
+    else if(descriptorType.compare("FREAK") == 0) 
+    {
+        std::cout << "FREAK descriptor" << std::endl;
+        extractor = cv::xfeatures2d::FREAK::create();
+        //...
+    }
+    else if(descriptorType.compare("AKAZE") == 0) 
+    {
+        std::cout << "AKAZE descriptor" << std::endl;
+        extractor = cv::AKAZE::create();
+        //...
+    }
+    else if(descriptorType.compare("SIFT") == 0) 
+    {
+        std::cout << "SIFT descriptor" << std::endl;
+        extractor = cv::xfeatures2d::SIFT::create();
+        //...
+    }
+  
+    extractor->compute(img, keypoints, descriptors);
+
+    
 
     // perform feature description
     double t = (double)cv::getTickCount();
