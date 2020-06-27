@@ -13,7 +13,12 @@
 
       if (matcherType.compare("MAT_BF") == 0)
       {
-          int normType = cv::NORM_HAMMING;
+        int normType;
+        if(descriptorType.compare("DES_BINARY") == 0)
+         {normType = cv::NORM_HAMMING;}
+        else
+         {normType = cv::NORM_L2;}
+        
           matcher = cv::BFMatcher::create(normType, crossCheck);
       }
       else if (matcherType.compare("MAT_FLANN") == 0)
@@ -71,9 +76,10 @@
   {
       // select appropriate descriptor
       cv::Ptr<cv::DescriptorExtractor> extractor;
+      
       if (descriptorType.compare("BRISK") == 0)
       {
-          std::cout << "BRISK descriptor" << std::endl;
+//           std::cout << "BRISK descriptor" << std::endl;
 
           int threshold = 30;        // FAST/AGAST detection threshold score.
           int octaves = 3;           // detection octaves (use 0 to do single scale)
@@ -83,14 +89,14 @@
       }
       else if(descriptorType.compare("BRIEF") == 0) 
       {
-          std::cout << "BRIEF descriptor" << std::endl;
+//           std::cout << "BRIEF descriptor" << std::endl;
           extractor = cv::xfeatures2d::BriefDescriptorExtractor::create();
           //...
 
       }
       else if(descriptorType.compare("ORB") == 0) 
       {
-          std::cout << "ORB descriptor" << std::endl;
+//           std::cout << "ORB descriptor" << std::endl;
   //         int   nfeatures = 500;     // The maximum number of features to retain.
   //         float scaleFactor = 1.2f;  // Pyramid decimation ratio, greater than 1.
   //         int   nlevels = 8;         // The number of pyramid levels.
@@ -111,19 +117,19 @@
       }
       else if(descriptorType.compare("FREAK") == 0) 
       {
-          std::cout << "FREAK descriptor" << std::endl;
+//           std::cout << "FREAK descriptor" << std::endl;
           extractor = cv::xfeatures2d::FREAK::create();
           //...
       }
       else if(descriptorType.compare("AKAZE") == 0) 
       {
-          std::cout << "AKAZE descriptor" << std::endl;
+//           std::cout << "AKAZE descriptor" << std::endl;
           extractor = cv::AKAZE::create();
           //...
       }
       else if(descriptorType.compare("SIFT") == 0) 
       {
-          std::cout << "SIFT descriptor" << std::endl;
+//           std::cout << "SIFT descriptor" << std::endl;
           extractor = cv::xfeatures2d::SIFT::create();
           //...
       }
@@ -163,7 +169,7 @@
           keypoints.push_back(newKeyPoint);
       }
       t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
-      cout << "Shi-Tomasi detection with n=" << keypoints.size() << " keypoints in " << 1000 * t / 1.0 << " ms" << endl;
+      cout << "Shi-Tomasi detection"  << 1000 * t / 1.0 << " ms" << endl;
 
       // visualize results
       // if (bVis)
@@ -180,13 +186,15 @@
   // Detect keypoints in image using the traditional Harris detector
   void detKeypointsHarris(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool bVis)
   {
-      std::cout << "Harris detector" << std::endl;
+//       std::cout << "Harris detector" << std::endl;
       // Detector parameters
       int blockSize = 2;     // for every pixel, a blockSize × blockSize neighborhood is considered
       int apertureSize = 3;  // aperture parameter for Sobel operator (must be odd)
       int minResponse = 100; // minimum value for a corner in the 8bit scaled response matrix
       double k = 0.04;       // Harris parameter (see equation for details)
-
+	  
+      double t = (double)cv::getTickCount();
+      
       // Detect Harris corners and normalize output
       cv::Mat dst, dst_norm, dst_norm_scaled;
       dst = cv::Mat::zeros(img.size(), CV_32FC1);
@@ -231,6 +239,8 @@
               }
           } // eof loop over cols
       }     // eof loop over rows
+	  t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
+//       cout << "harris corner detection " << 1000 * t / 1.0 << " ms" << endl;
 
 
       if(bVis)
@@ -260,43 +270,66 @@
           if(detectorType.compare("FAST") == 0)
           {
 
-              std::cout << "FAST detector" << std::endl;
+//               std::cout << "FAST detector" << std::endl;
               int threshold = 10;
               bool nonmaxSuppression = true;
+              
               cv::Ptr<cv::FastFeatureDetector> fast = cv::FastFeatureDetector::create(threshold, nonmaxSuppression);
+              double t = (double)cv::getTickCount();
               fast->detect(img, keypoints);  //TODO:add mask 
+              t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
+//               cout << "FAST detection " << 1000 * t / 1.0 << " ms" << endl;
+
 
               //...
           }
           else if(detectorType.compare("BRISK") == 0)
           {
-              std::cout << "BRISK detector" << std::endl;
+//               std::cout << "BRISK detector" << std::endl;
+              
               cv::Ptr<cv::BRISK> brisk = cv::BRISK::create();
+              double t = (double)cv::getTickCount();
               brisk->detect(img, keypoints);
+              t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
+//               cout << "BRISK detection " << 1000 * t / 1.0 << " ms" << endl;
 
 
               //...
           }
           else if(detectorType.compare("ORB") == 0)
           {
-              std::cout << "ORB detector" << std::endl;
+//               std::cout << "ORB detector" << std::endl;
+              
+              
               cv::Ptr<cv::ORB> orb = cv::ORB::create();
+              double t = (double)cv::getTickCount();
               orb->detect(img, keypoints);
+              t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
+//               cout << "ORB detection " << 1000 * t / 1.0 << " ms" << endl;
+
 
               //...
           }
           else if(detectorType.compare("AKAZE") == 0)
           {
-              std::cout << "AKAZE detector" << std::endl;
+//               std::cout << "AKAZE detector" << std::endl;
               cv::Ptr<cv::AKAZE> akaze = cv::AKAZE::create();
+              double t = (double)cv::getTickCount();
               akaze->detect(img, keypoints);
+              t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
+//               cout << "AKAZE detection " << 1000 * t / 1.0 << " ms" << endl;
+
               //...
           }
           else if(detectorType.compare("SIFT") == 0)
           {
-              std::cout << "SIFT detector" << std::endl;
+//               std::cout << "SIFT detector" << std::endl;
               cv::Ptr<cv::xfeatures2d::SIFT> sift = cv::xfeatures2d::SIFT::create();
+              double t = (double)cv::getTickCount();
               sift->detect(img, keypoints);
+              t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
+//               cout << "SIFT detection " << 1000 * t / 1.0 << " ms" << endl;
+
               //...
           }
           else{
